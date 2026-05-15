@@ -1,0 +1,9 @@
+cff-version: 1.2.0
+title: LWSM
+message: "If you use this software, please cite it using the metadata from this file."
+type: software
+authors:
+  - family-names: Kotani
+    given-names: Ryota
+repository-code: "https://github.com/K-Ryo-ta/LWSM"
+license: MIT
