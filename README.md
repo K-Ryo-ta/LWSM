@@ -2,6 +2,7 @@
 
 ![License](https://img.shields.io/github/license/K-Ryo-ta/LWSM)
 ![Version](https://img.shields.io/badge/version-1.0.0-blue)
+[![Coverage Status](https://coveralls.io/repos/github/K-Ryo-ta/LWSM/badge.svg?branch=main)](https://coveralls.io/github/K-Ryo-ta/LWSM?branch=main)
 
 lsコマンドでフォルダの中身を見るときに、中身が多すぎる場合に単語検索や文章検索で調べられるコマンド
 
