@@ -1,3 +1,8 @@
+use std::process;
+
 fn main() {
-    println!("Hello, world!");
+    if let Err(err) = lwsm::run() {
+        eprintln!("Error: {}", err);
+        process::exit(1);
+    }
 }
