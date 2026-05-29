@@ -52,3 +52,22 @@ Examples:
   lwsm -m test ./src",
     )
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn parse_mode_accepts_short_and_long_flags() {
+        assert!(matches!(parse_mode("-m").unwrap(), Mode::WordMatch));
+        assert!(matches!(parse_mode("--match").unwrap(), Mode::WordMatch));
+        assert!(matches!(parse_mode("-s").unwrap(), Mode::SentenceSearch));
+        assert!(matches!(parse_mode("--sentence").unwrap(), Mode::SentenceSearch));
+    }
+
+    #[test]
+    fn parse_mode_rejects_unknown_flag() {
+        assert!(parse_mode("-x").is_err());
+        assert!(parse_mode("").is_err());
+    }
+}

@@ -41,3 +41,36 @@ fn normalize(text: &str) -> String {
     text.to_lowercase()
         .replace(['_', '-', '.', '/', '\\'], " ")
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn normalize_lowercases_and_splits_separators() {
+        assert_eq!(normalize("Hello-World.txt"), "hello world txt");
+        assert_eq!(normalize("foo_bar"), "foo bar");
+    }
+
+    #[test]
+    fn word_match_requires_whole_word() {
+        assert!(word_match("readme.md", "readme"));
+        assert!(!word_match("readme.md", "read"));
+    }
+
+    #[test]
+    fn word_match_splits_on_hyphens() {
+        assert!(word_match("my-rust-lib", "rust"));
+    }
+
+    #[test]
+    fn sentence_search_matches_substring() {
+        assert!(sentence_search("readme.md", "read"));
+        assert!(sentence_search("hello_world.txt", "hello world"));
+    }
+
+    #[test]
+    fn sentence_search_is_case_insensitive() {
+        assert!(sentence_search("README.md", "readme"));
+    }
+}
