@@ -1,0 +1,40 @@
+baseURL = 'https://example.org/'
+locale = 'ja-JP'
+title = 'LWSM'
+
+disableKinds = ['taxonomy', 'term', 'rss', 'sitemap']
+
+[params]
+  description = 'lsコマンドでフォルダの中身を見るときに、中身が多すぎる場合に単語検索や文章検索で調べられるコマンド'
+  github = 'https://github.com/K-Ryo-ta/LWSM'
+  doi = 'https://doi.org/10.5281/zenodo.20195247'
+
+[menus]
+  [[menus.main]]
+    name = 'ホーム'
+    pageRef = '/'
+    weight = 10
+  [[menus.main]]
+    name = 'ドキュメント'
+    pageRef = '/docs'
+    weight = 20
+
+[markup]
+  [markup.highlight]
+    style = 'github-dark'
+
+[build]
+  [build.buildStats]
+    enable = true
+  [[build.cachebusters]]
+    source = 'assets/notwatching/hugo_stats\.json'
+    target = 'css'
+
+[module]
+  [[module.mounts]]
+    source = 'assets'
+    target = 'assets'
+  [[module.mounts]]
+    disableWatch = true
+    source = 'hugo_stats.json'
+    target = 'assets/notwatching/hugo_stats.json'

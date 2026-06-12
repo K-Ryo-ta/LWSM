@@ -1,0 +1,10 @@
+{
+  "name": "lwsm-docs",
+  "private": true,
+  "description": "LWSM documentation site built with Hugo and Tailwind CSS",
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.1.0",
+    "@tailwindcss/typography": "^0.5.16",
+    "tailwindcss": "^4.1.0"
+  }
+}
