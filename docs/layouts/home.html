@@ -1,0 +1,127 @@
+{{ define "main" }}
+<!-- Hero -->
+<section class="mx-auto grid w-full max-w-6xl items-center gap-14 px-6 py-20 lg:grid-cols-2 lg:py-24">
+  <div>
+    <div class="mb-6 flex flex-wrap gap-2">
+      <span class="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold tracking-wide text-slate-400">Rust 製 CLI</span>
+      <span class="rounded-full border border-emerald-400/40 bg-emerald-400/10 px-3 py-1 text-xs font-semibold tracking-wide text-emerald-400">v1.0.0</span>
+      <span class="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold tracking-wide text-slate-400">MIT License</span>
+    </div>
+    <h1 class="mb-6 text-4xl font-black leading-snug text-white lg:text-5xl">
+      <span class="bg-gradient-to-r from-emerald-400 to-sky-400 bg-clip-text font-mono text-transparent">ls</span> に検索を。<br>
+      多すぎるフォルダの中身を一瞬で絞り込む。
+    </h1>
+    <p class="mb-9 max-w-xl text-slate-400">
+      LWSM は、<code class="rounded-md border border-white/10 bg-white/10 px-1.5 py-0.5 font-mono text-sm text-slate-200">ls</code>
+      コマンドでフォルダの中身を見るときに、中身が多すぎる場合でも
+      <strong class="text-white">単語検索</strong>や<strong class="text-white">文章検索</strong>で
+      目的のファイル・ディレクトリを素早く見つけられるコマンドラインツールです。
+    </p>
+    <div class="flex flex-wrap gap-4">
+      <a href="/docs/" class="rounded-full bg-gradient-to-r from-emerald-400 to-sky-400 px-6 py-2.5 font-semibold text-emerald-950 shadow-lg shadow-emerald-500/25 transition hover:-translate-y-0.5 hover:shadow-emerald-500/40">
+        ドキュメントを見る
+      </a>
+      <a href="{{ site.Params.github }}" target="_blank" rel="noopener" class="rounded-full border border-white/10 bg-white/5 px-6 py-2.5 font-semibold text-white transition hover:-translate-y-0.5 hover:bg-white/10">
+        ソースコードを見る
+      </a>
+    </div>
+  </div>
+
+  <!-- Terminal mock -->
+  <div class="overflow-hidden rounded-2xl border border-white/10 bg-[#0d1320] shadow-2xl shadow-black/50" role="img" aria-label="lwsmコマンドの実行例">
+    <div class="flex items-center gap-2 border-b border-white/10 bg-white/5 px-4 py-3">
+      <span class="h-3 w-3 rounded-full bg-[#ff5f57]"></span>
+      <span class="h-3 w-3 rounded-full bg-[#febc2e]"></span>
+      <span class="h-3 w-3 rounded-full bg-[#28c840]"></span>
+      <span class="ml-3 font-mono text-xs text-slate-500">zsh — lwsm</span>
+    </div>
+    <div class="px-6 py-6 font-mono text-sm leading-loose">
+      <p><span class="font-bold text-emerald-400">$</span> ls</p>
+      <p class="text-slate-500">main.rs  lib.rs  config.rs  entries.rs  search.rs  output.rs<br>Cargo.toml  Cargo.lock  README.md  LICENSE  tests/  target/ ...</p>
+      <p><span class="font-bold text-emerald-400">$</span> lwsm -m <span class="text-sky-400">rust</span></p>
+      <p class="text-emerald-400">gamma-rust.txt</p>
+      <p><span class="font-bold text-emerald-400">$</span> lwsm -s <span class="text-sky-400">"hello world"</span></p>
+      <p class="text-emerald-400">hello_world.txt</p>
+      <p><span class="font-bold text-emerald-400">$</span> <span class="cursor-blink text-emerald-400">▋</span></p>
+    </div>
+  </div>
+</section>
+
+<!-- Features -->
+<section class="mx-auto w-full max-w-6xl px-6 py-16">
+  <h2 class="mb-2 text-3xl font-extrabold text-white"><span class="font-mono text-emerald-400">##</span> 特徴</h2>
+  <p class="mb-10 text-slate-400">「探す」をシンプルに。ls の延長で使える検索コマンド。</p>
+  <div class="grid gap-6 md:grid-cols-3">
+    <article class="rounded-2xl border border-white/10 bg-white/5 p-7 transition hover:-translate-y-1 hover:border-emerald-400/40 hover:bg-white/10">
+      <div class="mb-5 inline-flex h-13 min-w-13 items-center justify-center rounded-xl bg-gradient-to-r from-emerald-400 to-sky-400 px-3 py-3 font-mono text-lg font-bold text-emerald-950">-m</div>
+      <h3 class="mb-2 text-lg font-bold text-white">単語マッチ検索</h3>
+      <p class="text-sm text-slate-400">
+        ファイル名・ディレクトリ名を単語単位で完全一致検索。<code class="text-slate-300">_</code> や <code class="text-slate-300">-</code>、<code class="text-slate-300">.</code> も単語区切りとして扱うので、<code class="text-slate-300">my-rust-lib</code> も「rust」でヒットします。
+      </p>
+    </article>
+    <article class="rounded-2xl border border-white/10 bg-white/5 p-7 transition hover:-translate-y-1 hover:border-emerald-400/40 hover:bg-white/10">
+      <div class="mb-5 inline-flex h-13 min-w-13 items-center justify-center rounded-xl bg-gradient-to-r from-emerald-400 to-sky-400 px-3 py-3 font-mono text-lg font-bold text-emerald-950">-s</div>
+      <h3 class="mb-2 text-lg font-bold text-white">文章検索</h3>
+      <p class="text-sm text-slate-400">
+        部分一致の文章検索。大文字・小文字を区別しないので、<code class="text-slate-300">README.md</code> も「readme」で見つかります。
+      </p>
+    </article>
+    <article class="rounded-2xl border border-white/10 bg-white/5 p-7 transition hover:-translate-y-1 hover:border-emerald-400/40 hover:bg-white/10">
+      <div class="mb-5 inline-flex h-13 min-w-13 items-center justify-center rounded-xl bg-gradient-to-r from-emerald-400 to-sky-400 px-3 py-3 text-lg font-bold text-emerald-950">⚡</div>
+      <h3 class="mb-2 text-lg font-bold text-white">Rust 製で高速・軽量</h3>
+      <p class="text-sm text-slate-400">
+        Rust で実装された軽量な単一バイナリ。依存クレートなしで動作し、macOS / Linux / Windows をサポートします。
+      </p>
+    </article>
+  </div>
+</section>
+
+<!-- Quick start -->
+<section class="mx-auto w-full max-w-6xl px-6 py-16">
+  <h2 class="mb-2 text-3xl font-extrabold text-white"><span class="font-mono text-emerald-400">##</span> クイックスタート</h2>
+  <p class="mb-10 text-slate-400">引数はモード・クエリ・パス（省略時はカレントディレクトリ）の3つだけ。</p>
+  <div class="grid gap-6 md:grid-cols-2">
+    <div>
+      <h3 class="mb-3 text-sm font-bold tracking-wide text-slate-400">コマンド形式</h3>
+      <pre class="overflow-x-auto rounded-xl border border-white/10 bg-[#0d1320] px-6 py-5 font-mono text-sm leading-loose"><code><span class="font-bold text-emerald-400">$</span> lwsm -m &lt;word&gt; [path]
+<span class="font-bold text-emerald-400">$</span> lwsm -s &lt;sentence&gt; [path]</code></pre>
+    </div>
+    <div>
+      <h3 class="mb-3 text-sm font-bold tracking-wide text-slate-400">実行例</h3>
+      <pre class="overflow-x-auto rounded-xl border border-white/10 bg-[#0d1320] px-6 py-5 font-mono text-sm leading-loose"><code><span class="font-bold text-emerald-400">$</span> lwsm -m rust
+<span class="font-bold text-emerald-400">$</span> lwsm -s "hello world"
+<span class="font-bold text-emerald-400">$</span> lwsm -m test ./src</code></pre>
+    </div>
+  </div>
+  <div class="mt-8 text-center">
+    <a href="/docs/usage/" class="text-sm font-semibold text-sky-400 hover:underline">詳しい使い方を見る →</a>
+  </div>
+</section>
+
+<!-- Roadmap -->
+<section class="mx-auto w-full max-w-6xl px-6 py-16">
+  <h2 class="mb-2 text-3xl font-extrabold text-white"><span class="font-mono text-emerald-400">##</span> ロードマップ</h2>
+  <p class="mb-10 text-slate-400">ファイル検索しながら、一括で単語数なども調べられるツールを目指しています。</p>
+  <ul class="grid gap-4">
+    {{ $roadmap := slice
+      (dict "done" true  "cmd" "lwsm -m" "title" "単語マッチ検索" "desc" "ディレクトリ名・ファイル名を単語単位で検索")
+      (dict "done" true  "cmd" "lwsm -s" "title" "文章検索" "desc" "ディレクトリ名・ファイル名を部分一致で検索")
+      (dict "done" false "cmd" "lwsm -c" "title" "内容検索" "desc" "ファイルの中身から該当のファイルを探す")
+      (dict "done" false "cmd" "lwsm -t" "title" "単語数カウント" "desc" "ファイルの単語数を調べられるようにする")
+    }}
+    {{ range $roadmap }}
+      <li class="flex items-start gap-5 rounded-xl border border-white/10 bg-white/5 px-6 py-5">
+        {{ if .done }}
+          <span class="mt-1 shrink-0 rounded-full border border-emerald-400/40 bg-emerald-400/10 px-3 py-0.5 text-xs font-bold tracking-wider text-emerald-400">実装済み</span>
+        {{ else }}
+          <span class="mt-1 shrink-0 rounded-full border border-white/10 px-3 py-0.5 text-xs font-bold tracking-wider text-slate-400">予定</span>
+        {{ end }}
+        <div>
+          <h3 class="font-bold text-white"><code class="font-mono text-sky-400">{{ .cmd }}</code> {{ .title }}</h3>
+          <p class="text-sm text-slate-400">{{ .desc }}</p>
+        </div>
+      </li>
+    {{ end }}
+  </ul>
+</section>
+{{ end }}
