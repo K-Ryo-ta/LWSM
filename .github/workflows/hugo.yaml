@@ -51,7 +51,7 @@ jobs:
       - name: Build
         working-directory: ./docs
         run: |
-          hugo --gc --minify --baseURL "${{ steps.pages.outputs.base_url }}/"
+          hugo --gc --minify --baseURL "https://k-ryo-ta.github.io/LWSM/"
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v5
