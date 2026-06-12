@@ -18,7 +18,7 @@
       目的のファイル・ディレクトリを素早く見つけられるコマンドラインツールです。
     </p>
     <div class="flex flex-wrap gap-4">
-      <a href="/docs/" class="rounded-full bg-gradient-to-r from-emerald-400 to-sky-400 px-6 py-2.5 font-semibold text-emerald-950 shadow-lg shadow-emerald-500/25 transition hover:-translate-y-0.5 hover:shadow-emerald-500/40">
+      <a href='{{ relref . "/docs" }}' class="rounded-full bg-gradient-to-r from-emerald-400 to-sky-400 px-6 py-2.5 font-semibold text-emerald-950 shadow-lg shadow-emerald-500/25 transition hover:-translate-y-0.5 hover:shadow-emerald-500/40">
         ドキュメントを見る
       </a>
       <a href="{{ site.Params.github }}" target="_blank" rel="noopener" class="rounded-full border border-white/10 bg-white/5 px-6 py-2.5 font-semibold text-white transition hover:-translate-y-0.5 hover:bg-white/10">
@@ -94,7 +94,7 @@
     </div>
   </div>
   <div class="mt-8 text-center">
-    <a href="/docs/usage/" class="text-sm font-semibold text-sky-400 hover:underline">詳しい使い方を見る →</a>
+    <a href='{{ relref . "/docs/usage" }}' class="text-sm font-semibold text-sky-400 hover:underline">詳しい使い方を見る →</a>
   </div>
 </section>
 
