@@ -31,3 +31,60 @@ lwsm/
    ├─ search.rs
    └─ output.rs
 ```
+
+## Docker配布手順（マルチプラットフォーム）
+
+`linux/amd64` と `linux/arm64` のコンテナイメージを、同じタグで `ghcr.io` に配布できます。
+
+### 1. 事前準備（初回のみ）
+
+- GitHub Personal Access Token を作成する（`write:packages` 権限を付与）
+- ローカルで `ghcr.io` にログインする
+
+```bash
+export ACCESS_TOKEN=<your_github_token>
+echo "$ACCESS_TOKEN" | docker login ghcr.io -u <your_github_username> --password-stdin
+```
+
+### 2. Buildxビルダー作成（初回のみ）
+
+```bash
+docker buildx create --use
+docker buildx ls
+```
+
+### 3. 手元で簡単にビルドする（Just）
+
+```bash
+just docker-image 0.1.0
+```
+
+`Justfile` は `.github/scripts/build_docker.sh` を呼び出します。  
+毎回長い `docker buildx build ...` を直接書かなくて済みます。
+
+### 4. 手元からGHCRへpushする（Just）
+
+```bash
+just docker-image-push 0.1.0
+```
+
+任意のイメージ名を使う場合:
+
+```bash
+just docker-image-push-to ghcr.io/<owner>/<repo> 0.1.0
+```
+
+### 5. 実行確認
+
+```bash
+docker run --rm ghcr.io/<owner>/lwsm:latest --help
+```
+
+## GitHub Actionsでの自動配布
+
+`publish` ワークフロー（`.github/workflows/publish.yaml`）に `container_image` ジョブを組み込み、`finalize` の前に自動実行されるようにしています。
+
+- `docker buildx` で `linux/amd64,linux/arm64` をビルド
+- `ghcr.io/<owner>/<repo>` に push
+- OCIメタデータ（`title`, `description`, `licenses`, `authors`, `version`, `source` など）を付与
+- タグ `<version>` と `latest` を付与
