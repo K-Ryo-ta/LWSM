@@ -156,11 +156,76 @@ jobs:
           PUSH=true \
           ./.github/scripts/build_docker.sh
 
+  homebrew:
+    runs-on: ubuntu-latest
+    needs: [setup, publish] # リリース資産（tar.gz）が揃ってから実行する。
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Generate Homebrew formula
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG=${{ needs.setup.outputs.tag }}
+          APP=${{ needs.setup.outputs.appname }}
+
+          # リリースにアップ済みの各アーキ向け tar.gz をダウンロードする。
+          mkdir -p dist
+          for arch_os in arm64_darwin amd64_darwin arm64_linux amd64_linux; do
+            gh release download "v${TAG}" \
+              --repo "${GITHUB_REPOSITORY}" \
+              --pattern "${APP}-${TAG}_${arch_os}.tar.gz" \
+              --dir dist
+          done
+
+          # 各 tar.gz の SHA256 を算出する。
+          SHA_DARWIN_ARM64=$(sha256sum "dist/${APP}-${TAG}_arm64_darwin.tar.gz" | cut -d' ' -f1)
+          SHA_DARWIN_AMD64=$(sha256sum "dist/${APP}-${TAG}_amd64_darwin.tar.gz" | cut -d' ' -f1)
+          SHA_LINUX_ARM64=$(sha256sum "dist/${APP}-${TAG}_arm64_linux.tar.gz" | cut -d' ' -f1)
+          SHA_LINUX_AMD64=$(sha256sum "dist/${APP}-${TAG}_amd64_linux.tar.gz" | cut -d' ' -f1)
+
+          # テンプレートのプレースホルダを埋めて Formula を生成する。
+          mkdir -p Formula
+          sed \
+            -e "s/\${VERSION}/${TAG}/g" \
+            -e "s/\${SHA256_DARWIN_ARM64}/${SHA_DARWIN_ARM64}/g" \
+            -e "s/\${SHA256_DARWIN_AMD64}/${SHA_DARWIN_AMD64}/g" \
+            -e "s/\${SHA256_LINUX_ARM64}/${SHA_LINUX_ARM64}/g" \
+            -e "s/\${SHA256_LINUX_AMD64}/${SHA_LINUX_AMD64}/g" \
+            .github/templates/lwsm.rb > Formula/lwsm.rb
+
+          cat Formula/lwsm.rb
+
+      - name: Push formula to homebrew-tap
+        env:
+          # homebrew-tap リポジトリへ push できる PAT（repo 権限）を登録しておくこと。
+          TAP_TOKEN: ${{ secrets.TAP_GITHUB_TOKEN }}
+        run: |
+          TAG=${{ needs.setup.outputs.tag }}
+          OWNER=${GITHUB_REPOSITORY%%/*}
+
+          git clone "https://x-access-token:${TAP_TOKEN}@github.com/${OWNER}/homebrew-tap.git" tap
+          mkdir -p tap/Formula
+          cp Formula/lwsm.rb tap/Formula/lwsm.rb
+
+          cd tap
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add Formula/lwsm.rb
+          git commit -m "lwsm ${TAG}"
+          git push origin HEAD
+
   finalize:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-    needs: [publish, container_image] # バイナリ配布とコンテナ配布の完了後に実行する。
+    needs: [publish, container_image, homebrew] # バイナリ・コンテナ・Homebrew の配布完了後に実行する。
     steps:
       - name: Checkout
         uses: actions/checkout@v6
