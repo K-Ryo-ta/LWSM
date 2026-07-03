@@ -32,6 +32,23 @@ lwsm/
    └─ output.rs
 ```
 
+## インストール（Homebrew）
+
+`homebrew-tap` 経由でインストールできます。
+
+```bash
+brew tap K-Ryo-ta/tap
+brew install lwsm
+```
+
+または1行で:
+
+```bash
+brew install K-Ryo-ta/tap/lwsm
+```
+
+インストール時に `lwsm --completions` で生成したシェル補完（bash / zsh / fish）も同時に導入されます。
+
 ## Docker配布手順（マルチプラットフォーム）
 
 `linux/amd64` と `linux/arm64` のコンテナイメージを、同じタグで `ghcr.io` に配布できます。
@@ -88,3 +105,11 @@ docker run --rm ghcr.io/<owner>/lwsm:latest --help
 - `ghcr.io/<owner>/<repo>` に push
 - OCIメタデータ（`title`, `description`, `licenses`, `authors`, `version`, `source` など）を付与
 - タグ `<version>` と `latest` を付与
+
+また `homebrew` ジョブで、リリース資産の SHA256 を算出して Formula（`.github/templates/lwsm.rb` を埋めたもの）を生成し、`K-Ryo-ta/homebrew-tap` の `Formula/lwsm.rb` に自動 push します。
+
+### Homebrew自動配布に必要な準備（初回のみ）
+
+- GitHub に `homebrew-tap` リポジトリ（`K-Ryo-ta/homebrew-tap`）を作成する
+- `homebrew-tap` に push できる PAT（`repo` 権限）を発行する
+- このリポジトリの Secrets に `TAP_GITHUB_TOKEN` として登録する
