@@ -1,9 +1,19 @@
 use std::fs;
 use std::path::PathBuf;
 use std::process::Command;
+use std::sync::atomic::{AtomicUsize, Ordering};
 
-fn fixture(names: &[&str]) -> PathBuf {
-    let dir = std::env::temp_dir().join(format!("lwsm_l_{}", std::process::id()));
+// テストは並列実行されるため、テストごとに一意な一時ディレクトリを使う。
+// プロセスIDだけでは同一プロセス内の別テストと衝突するので、
+// アトミックカウンタを組み合わせて衝突を避ける。
+fn unique_dir(label: &str) -> PathBuf {
+    static COUNTER: AtomicUsize = AtomicUsize::new(0);
+    let n = COUNTER.fetch_add(1, Ordering::Relaxed);
+    std::env::temp_dir().join(format!("lwsm_{label}_{}_{n}", std::process::id()))
+}
+
+fn fixture(label: &str, names: &[&str]) -> PathBuf {
+    let dir = unique_dir(label);
     let _ = fs::remove_dir_all(&dir);
     fs::create_dir_all(&dir).unwrap();
     for name in names {
@@ -14,7 +24,7 @@ fn fixture(names: &[&str]) -> PathBuf {
 
 #[test]
 fn cli_m_prints_only_word_matched_files() {
-    let dir = fixture(&["readme.md", "notes.txt"]);
+    let dir = fixture("m", &["readme.md", "notes.txt"]);
     let output = Command::new(env!("CARGO_BIN_EXE_lwsm"))
         .args(["-m", "readme", dir.to_str().unwrap()])
         .output()
@@ -34,7 +44,7 @@ fn cli_m_prints_only_word_matched_files() {
 
 #[test]
 fn cli_s_prints_sentence_matched_files() {
-    let dir = fixture(&["hello_world.txt", "other.txt"]);
+    let dir = fixture("s", &["hello_world.txt", "other.txt"]);
     let output = Command::new(env!("CARGO_BIN_EXE_lwsm"))
         .args(["-s", "hello world", dir.to_str().unwrap()])
         .output()
@@ -50,7 +60,7 @@ fn cli_s_prints_sentence_matched_files() {
 
 #[test]
 fn cli_c_prints_only_content_matched_files() {
-    let dir = std::env::temp_dir().join(format!("lwsm_c_{}", std::process::id()));
+    let dir = unique_dir("c");
     let _ = fs::remove_dir_all(&dir);
     fs::create_dir_all(&dir).unwrap();
     fs::write(dir.join("hit.txt"), "this file has the keyword TODO inside").unwrap();
