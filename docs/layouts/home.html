@@ -15,7 +15,8 @@
       LWSM は、<code class="rounded-md border border-white/10 bg-white/10 px-1.5 py-0.5 font-mono text-sm text-slate-200">ls</code>
       コマンドでフォルダの中身を見るときに、中身が多すぎる場合でも
       <strong class="text-white">単語検索</strong>・<strong class="text-white">文章検索</strong>・<strong class="text-white">内容検索</strong>で
-      目的のファイル・ディレクトリを素早く見つけられるコマンドラインツールです。
+      目的のファイル・ディレクトリを素早く見つけられ、<strong class="text-white">文字数カウント</strong>も行える
+      コマンドラインツールです。
     </p>
     <div class="flex flex-wrap gap-4">
       <a href='{{ relref . "/docs" }}' class="rounded-full bg-gradient-to-r from-emerald-400 to-sky-400 px-6 py-2.5 font-semibold text-emerald-950 shadow-lg shadow-emerald-500/25 transition hover:-translate-y-0.5 hover:shadow-emerald-500/40">
@@ -44,6 +45,8 @@
       <p class="text-emerald-400">hello_world.txt</p>
       <p><span class="font-bold text-emerald-400">$</span> lwsm -c <span class="text-sky-400">"TODO"</span></p>
       <p class="text-emerald-400">main.rs</p>
+      <p><span class="font-bold text-emerald-400">$</span> lwsm -t <span class="text-sky-400">README.md</span></p>
+      <p class="text-slate-400">    2688  README.md</p>
       <p><span class="font-bold text-emerald-400">$</span> <span class="cursor-blink text-emerald-400">▋</span></p>
     </div>
   </div>
@@ -53,7 +56,7 @@
 <section class="mx-auto w-full max-w-6xl px-6 py-16">
   <h2 class="mb-2 text-3xl font-extrabold text-white"><span class="font-mono text-emerald-400">##</span> 特徴</h2>
   <p class="mb-10 text-slate-400">「探す」をシンプルに。ls の延長で使える検索コマンド。</p>
-  <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+  <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
     <article class="rounded-2xl border border-white/10 bg-white/5 p-7 transition hover:-translate-y-1 hover:border-emerald-400/40 hover:bg-white/10">
       <div class="mb-5 inline-flex h-13 min-w-13 items-center justify-center rounded-xl bg-gradient-to-r from-emerald-400 to-sky-400 px-3 py-3 font-mono text-lg font-bold text-emerald-950">-m</div>
       <h3 class="mb-2 text-lg font-bold text-white">単語マッチ検索</h3>
@@ -76,6 +79,13 @@
       </p>
     </article>
     <article class="rounded-2xl border border-white/10 bg-white/5 p-7 transition hover:-translate-y-1 hover:border-emerald-400/40 hover:bg-white/10">
+      <div class="mb-5 inline-flex h-13 min-w-13 items-center justify-center rounded-xl bg-gradient-to-r from-emerald-400 to-sky-400 px-3 py-3 font-mono text-lg font-bold text-emerald-950">-t</div>
+      <h3 class="mb-2 text-lg font-bold text-white">文字数カウント</h3>
+      <p class="text-sm text-slate-400">
+        ファイル、またはディレクトリ内の各ファイルの<strong class="text-slate-200">文字数</strong>を集計。ディレクトリ指定なら各ファイルの文字数と合計（<code class="text-slate-300">total</code>）をまとめて表示します。空白・改行を除き、日本語も1文字として数えます。
+      </p>
+    </article>
+    <article class="rounded-2xl border border-white/10 bg-white/5 p-7 transition hover:-translate-y-1 hover:border-emerald-400/40 hover:bg-white/10">
       <div class="mb-5 inline-flex h-13 min-w-13 items-center justify-center rounded-xl bg-gradient-to-r from-emerald-400 to-sky-400 px-3 py-3 text-lg font-bold text-emerald-950">⚡</div>
       <h3 class="mb-2 text-lg font-bold text-white">Rust 製で高速・軽量</h3>
       <p class="text-sm text-slate-400">
@@ -94,13 +104,15 @@
       <h3 class="mb-3 text-sm font-bold tracking-wide text-slate-400">コマンド形式</h3>
       <pre class="overflow-x-auto rounded-xl border border-white/10 bg-[#0d1320] px-6 py-5 font-mono text-sm leading-loose"><code><span class="font-bold text-emerald-400">$</span> lwsm -m &lt;word&gt; [path]
 <span class="font-bold text-emerald-400">$</span> lwsm -s &lt;sentence&gt; [path]
-<span class="font-bold text-emerald-400">$</span> lwsm -c &lt;keyword&gt; [path]</code></pre>
+<span class="font-bold text-emerald-400">$</span> lwsm -c &lt;keyword&gt; [path]
+<span class="font-bold text-emerald-400">$</span> lwsm -t [path]</code></pre>
     </div>
     <div>
       <h3 class="mb-3 text-sm font-bold tracking-wide text-slate-400">実行例</h3>
       <pre class="overflow-x-auto rounded-xl border border-white/10 bg-[#0d1320] px-6 py-5 font-mono text-sm leading-loose"><code><span class="font-bold text-emerald-400">$</span> lwsm -m rust
 <span class="font-bold text-emerald-400">$</span> lwsm -s "hello world"
-<span class="font-bold text-emerald-400">$</span> lwsm -c "TODO" ./src</code></pre>
+<span class="font-bold text-emerald-400">$</span> lwsm -c "TODO" ./src
+<span class="font-bold text-emerald-400">$</span> lwsm -t ./src</code></pre>
     </div>
   </div>
   <div class="mt-8 text-center">
@@ -111,13 +123,13 @@
 <!-- Roadmap -->
 <section class="mx-auto w-full max-w-6xl px-6 py-16">
   <h2 class="mb-2 text-3xl font-extrabold text-white"><span class="font-mono text-emerald-400">##</span> ロードマップ</h2>
-  <p class="mb-10 text-slate-400">ファイル検索しながら、一括で単語数なども調べられるツールを目指しています。</p>
+  <p class="mb-10 text-slate-400">ファイル検索しながら、一括で文字数なども調べられるツールを目指しています。</p>
   <ul class="grid gap-4">
     {{ $roadmap := slice
       (dict "done" true  "cmd" "lwsm -m" "title" "単語マッチ検索" "desc" "ディレクトリ名・ファイル名を単語単位で検索")
       (dict "done" true  "cmd" "lwsm -s" "title" "文章検索" "desc" "ディレクトリ名・ファイル名を部分一致で検索")
       (dict "done" true  "cmd" "lwsm -c" "title" "内容検索" "desc" "ファイルの中身からキーワードを含むファイルを探す")
-      (dict "done" false "cmd" "lwsm -t" "title" "単語数カウント" "desc" "ファイルの単語数を調べられるようにする")
+      (dict "done" true  "cmd" "lwsm -t" "title" "文字数カウント" "desc" "ファイル・ディレクトリ内の各ファイルの文字数を数える")
     }}
     {{ range $roadmap }}
       <li class="flex items-start gap-5 rounded-xl border border-white/10 bg-white/5 px-6 py-5">

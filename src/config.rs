@@ -52,6 +52,7 @@ mod tests {
             word_match,
             sentence,
             content,
+            total_words: false,
             completions: false,
             query: query.map(str::to_string),
             path: PathBuf::from("."),
