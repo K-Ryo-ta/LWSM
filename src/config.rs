@@ -1,9 +1,11 @@
-use std::env;
 use std::path::PathBuf;
+
+use crate::Args;
 
 pub enum Mode {
     WordMatch,
     SentenceSearch,
+    ContentSearch,
 }
 
 pub struct Config {
@@ -12,62 +14,73 @@ pub struct Config {
     pub path: PathBuf,
 }
 
-pub fn parse_args() -> Result<Config, String> {
-    let mut args = env::args().skip(1);
+impl Config {
+    /// Build a `Config` from parsed CLI arguments.
+    ///
+    /// clap（`Args`）が唯一のパーサーで、ここではそれをドメインの
+    /// `Config` に変換するだけ。排他・必須の検証は `Args` 側の
+    /// `ArgGroup` で済んでいる前提だが、防御的にここでも確認する。
+    pub fn from_args(args: Args) -> Result<Self, String> {
+        let mode = if args.word_match {
+            Mode::WordMatch
+        } else if args.sentence {
+            Mode::SentenceSearch
+        } else if args.content {
+            Mode::ContentSearch
+        } else {
+            return Err("検索モード（-m / -s / -c）を1つ指定してください。".to_string());
+        };
 
-    let mode_arg = args.next().ok_or_else(usage)?;
-    let query = args.next().ok_or_else(usage)?;
+        let query = args
+            .query
+            .ok_or_else(|| "検索するクエリを指定してください。".to_string())?;
 
-    let path = args
-        .next()
-        .map(PathBuf::from)
-        .unwrap_or_else(|| PathBuf::from("."));
-
-    if args.next().is_some() {
-        return Err(format!("引数が多すぎます。\n\n{}", usage()));
+        Ok(Config {
+            mode,
+            query,
+            path: args.path,
+        })
     }
-
-    let mode = parse_mode(&mode_arg)?;
-
-    Ok(Config { mode, query, path })
-}
-
-fn parse_mode(mode_arg: &str) -> Result<Mode, String> {
-    match mode_arg {
-        "-m" | "--match" => Ok(Mode::WordMatch),
-        "-s" | "--sentence" => Ok(Mode::SentenceSearch),
-        _ => Err(usage()),
-    }
-}
-
-fn usage() -> String {
-    String::from(
-        "Usage:
-  lwsm -m <word> [path]
-  lwsm -s <sentence> [path]
-
-Examples:
-  lwsm -m rust
-  lwsm -s \"hello world\"
-  lwsm -m test ./src",
-    )
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
 
-    #[test]
-    fn parse_mode_accepts_short_and_long_flags() {
-        assert!(matches!(parse_mode("-m").unwrap(), Mode::WordMatch));
-        assert!(matches!(parse_mode("--match").unwrap(), Mode::WordMatch));
-        assert!(matches!(parse_mode("-s").unwrap(), Mode::SentenceSearch));
-        assert!(matches!(parse_mode("--sentence").unwrap(), Mode::SentenceSearch));
+    fn args(word_match: bool, sentence: bool, content: bool, query: Option<&str>) -> Args {
+        Args {
+            word_match,
+            sentence,
+            content,
+            completions: false,
+            query: query.map(str::to_string),
+            path: PathBuf::from("."),
+        }
     }
 
     #[test]
-    fn parse_mode_rejects_unknown_flag() {
-        assert!(parse_mode("-x").is_err());
-        assert!(parse_mode("").is_err());
+    fn from_args_maps_each_flag_to_mode() {
+        assert!(matches!(
+            Config::from_args(args(true, false, false, Some("q"))).unwrap().mode,
+            Mode::WordMatch
+        ));
+        assert!(matches!(
+            Config::from_args(args(false, true, false, Some("q"))).unwrap().mode,
+            Mode::SentenceSearch
+        ));
+        assert!(matches!(
+            Config::from_args(args(false, false, true, Some("q"))).unwrap().mode,
+            Mode::ContentSearch
+        ));
+    }
+
+    #[test]
+    fn from_args_requires_a_mode() {
+        assert!(Config::from_args(args(false, false, false, Some("q"))).is_err());
+    }
+
+    #[test]
+    fn from_args_requires_a_query() {
+        assert!(Config::from_args(args(true, false, false, None)).is_err());
     }
 }

@@ -1,5 +1,5 @@
 class Lwsm < Formula
-  desc "list & search files by word/sentence"
+  desc "list & search files by word / sentence / content"
   homepage "https://github.com/K-Ryo-ta/LWSM"
   version "${VERSION}"
   license "MIT"

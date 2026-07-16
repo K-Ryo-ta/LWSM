@@ -49,9 +49,54 @@ fn cli_s_prints_sentence_matched_files() {
 }
 
 #[test]
+fn cli_c_prints_only_content_matched_files() {
+    let dir = std::env::temp_dir().join(format!("lwsm_c_{}", std::process::id()));
+    let _ = fs::remove_dir_all(&dir);
+    fs::create_dir_all(&dir).unwrap();
+    fs::write(dir.join("hit.txt"), "this file has the keyword TODO inside").unwrap();
+    fs::write(dir.join("miss.txt"), "nothing relevant here").unwrap();
+
+    let output = Command::new(env!("CARGO_BIN_EXE_lwsm"))
+        .args(["-c", "todo", dir.to_str().unwrap()])
+        .output()
+        .expect("failed to run lwsm");
+
+    assert!(
+        output.status.success(),
+        "stderr: {}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    assert!(stdout.contains("hit.txt"));
+    assert!(!stdout.contains("miss.txt"));
+
+    let _ = fs::remove_dir_all(&dir);
+}
+
+#[test]
 fn cli_fails_on_unknown_flag() {
     let output = Command::new(env!("CARGO_BIN_EXE_lwsm"))
         .args(["-x", "query", "."])
+        .output()
+        .unwrap();
+
+    assert!(!output.status.success());
+}
+
+#[test]
+fn cli_fails_when_multiple_modes_given() {
+    let output = Command::new(env!("CARGO_BIN_EXE_lwsm"))
+        .args(["-m", "-s", "query", "."])
+        .output()
+        .unwrap();
+
+    assert!(!output.status.success());
+}
+
+#[test]
+fn cli_fails_when_no_mode_given() {
+    let output = Command::new(env!("CARGO_BIN_EXE_lwsm"))
+        .args(["query", "."])
         .output()
         .unwrap();
 

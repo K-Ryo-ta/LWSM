@@ -9,6 +9,7 @@ weight: 20
 ```bash
 lwsm -m <word> [path]
 lwsm -s <sentence> [path]
+lwsm -c <keyword> [path]
 ```
 
 `path` を省略するとカレントディレクトリ（`.`）が対象になります。
@@ -19,6 +20,7 @@ lwsm -s <sentence> [path]
 |---|---|---|
 | `-m` | `--match` | 単語単位の完全一致でファイル名・ディレクトリ名を検索 |
 | `-s` | `--sentence` | 部分一致（大文字小文字を区別しない）で検索 |
+| `-c` | `--content` | ファイルの中身を読み、キーワードを含むファイルを検索 |
 
 ## 検索モードの違い
 
@@ -42,11 +44,23 @@ $ lwsm -s "hello world"
 hello_world.txt   # "hello_world" → "hello world" に正規化されてヒット
 ```
 
+### 内容検索（`-c`）
+
+ファイル名ではなく**ファイルの中身**を読み込み、キーワードを含むファイルだけを表示します。大文字・小文字は区別しません。
+
+```bash
+$ lwsm -c "TODO"
+main.rs   # ファイル内に "TODO" を含むのでヒット
+```
+
+ディレクトリや、テキストとして読み込めない（バイナリなどの）ファイルは対象外としてスキップされます。
+
 ## 実行例
 
 ```bash
 lwsm -m rust            # カレントディレクトリから "rust" を単語検索
 lwsm -s "hello world"   # 文章検索
+lwsm -c "TODO" ./src    # ./src 内のファイルの中身から "TODO" を検索
 lwsm -m test ./src      # ./src を対象に検索
 ```
 
