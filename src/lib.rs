@@ -2,6 +2,7 @@ pub mod config;
 pub mod entries;
 pub mod output;
 pub mod search;
+pub mod wordcount;
 mod gencomp;
 
 use clap::{ArgGroup, Parser};
@@ -31,6 +32,13 @@ pub struct Args {
     #[arg(short = 'c', long = "content", help = "search file contents by keyword")]
     pub content: bool,
 
+    #[arg(
+        short = 't',
+        long = "total-words",
+        help = "count characters in a file or all files in a directory"
+    )]
+    pub total_words: bool,
+
     #[arg(long, help = "generate completion files", default_value_t = false)]
     pub completions: bool,
 
@@ -45,6 +53,18 @@ pub fn run() -> Result<(), Box<dyn std::error::Error>> {
 
     if args.completions {
         gencomp::generate(Path::new("completions"));
+        return Ok(());
+    }
+
+    if args.total_words {
+        // -t はクエリを取らないので、最初の位置引数をパスとして扱う。
+        // `lwsm -t ./file.txt` と `lwsm -t` (カレントディレクトリ) の
+        // どちらも自然に動くようにする。
+        let target = args
+            .query
+            .map(PathBuf::from)
+            .unwrap_or_else(|| args.path.clone());
+        wordcount::print_word_counts(&target)?;
         return Ok(());
     }
 
