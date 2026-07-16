@@ -38,7 +38,7 @@ if [[ -z "${VERSION:-}" ]]; then
 fi
 
 TITLE="${OCI_TITLE:-lwsm}"
-DESCRIPTION="${OCI_DESCRIPTION:-Lightweight Word Search Manager CLI}"
+DESCRIPTION="${OCI_DESCRIPTION:-list & search files by word / sentence / content}"
 LICENSES="${OCI_LICENSES:-MIT}"
 AUTHORS="${OCI_AUTHORS:-K-Ryo-ta}"
 SOURCE_URL="${OCI_SOURCE:-https://github.com/${GITHUB_REPOSITORY:-K-Ryo-ta/LWSM}}"

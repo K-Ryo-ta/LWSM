@@ -1,4 +1,4 @@
-use std::fs::DirEntry;
+use std::fs::{self, DirEntry};
 
 use crate::config::{Config, Mode};
 
@@ -9,16 +9,31 @@ pub fn filter_entries(entries: Vec<DirEntry>, config: &Config) -> Vec<DirEntry> 
             let file_name = entry.file_name();
             let name = file_name.to_string_lossy();
 
-            is_match(&name, &config.query, &config.mode)
+            is_match(entry, &name, &config.query, &config.mode)
         })
         .collect()
 }
 
-fn is_match(file_name: &str, query: &str, mode: &Mode) -> bool {
+fn is_match(entry: &DirEntry, file_name: &str, query: &str, mode: &Mode) -> bool {
     match mode {
         Mode::WordMatch => word_match(file_name, query),
         Mode::SentenceSearch => sentence_search(file_name, query),
+        Mode::ContentSearch => content_search(entry, query),
     }
+}
+
+fn content_search(entry: &DirEntry, query: &str) -> bool {
+    match entry.file_type() {
+        Ok(file_type) if file_type.is_file() => match fs::read_to_string(entry.path()) {
+            Ok(contents) => file_contains(&contents, query),
+            Err(_) => false,
+        },
+        _ => false,
+    }
+}
+
+fn file_contains(contents: &str, query: &str) -> bool {
+    contents.to_lowercase().contains(&query.to_lowercase())
 }
 
 fn word_match(file_name: &str, query: &str) -> bool {
@@ -72,5 +87,13 @@ mod tests {
     #[test]
     fn sentence_search_is_case_insensitive() {
         assert!(sentence_search("README.md", "readme"));
+    }
+
+    #[test]
+    fn file_contains_matches_substring_case_insensitive() {
+        let contents = "fn main() {\n    // TODO: implement\n}";
+        assert!(file_contains(contents, "todo"));
+        assert!(file_contains(contents, "main"));
+        assert!(!file_contains(contents, "missing"));
     }
 }

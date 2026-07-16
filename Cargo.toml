@@ -2,6 +2,8 @@
 name = "lwsm"
 version = "0.1.0"
 edition = "2024"
+description = "list & search files by word / sentence / content"
+license = "MIT"
 
 [dependencies]
 clap = { version = "4", features = ["derive"] }
